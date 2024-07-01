@@ -1,0 +1,137 @@
+
+import React, { useEffect, useState, useMemo } from 'react';
+import io from 'socket.io-client';
+import L from 'leaflet';
+import Validate from './Validate';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import Coords from './Coords';
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import customMarkerIcon from "../pin.jpeg";
+
+
+
+export default function Rec() {
+  const user = Validate();
+  const { senderId } = useParams();
+
+  const [location, setLocation] = useState(null);
+  const [timer, setTimer] = useState(0);
+  const [map, setMap] = useState(null); // State to hold the map instance
+  const [marker, setMarker] = useState(null); // State to hold the marker instance
+
+  const [rooms, setRooms] = useState([]);
+  const [senderEmail, setSenderEmail] = useState('');
+
+  const customIcon = L.icon({
+    iconUrl: customMarkerIcon,
+    iconSize: [40, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+  });
+
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/rooms`)
+      .then(response => {
+        setRooms(response.data);
+        // Assuming you want to find the roomCode where the sender is the owner
+        const room = response.data.find(room => room.roomCode === senderId);
+        if (room) {
+          setSenderEmail(room.owner);
+        }
+      })
+      .catch(err => console.error(err));
+  }, [user]);
+
+
+  const socket = useMemo(() => io(process.env.REACT_APP_API_BASE_URL), []);
+  // Join student room on socket and listen for location updates
+  useEffect(() => {
+    if (senderId) {
+      console.log("hi " + senderId)
+      console.log(`Joining student room for senderId: ${senderId}`);
+      socket.emit('joinStudentRoom', senderId);
+
+      socket.on('locationUpdate', (data) => {
+        console.log('Location update received:', data);
+        setLocation(data); // Update location state with received data
+        setTimer((prevTimer) => prevTimer + 1); // Increment timer
+      });
+
+      return () => {
+        console.log(`Leaving student room for senderId: ${senderId}`);
+        socket.off('locationUpdate');
+      };
+    }
+  }, [senderId, socket]);
+
+  // Initialize or update Leaflet map with location data
+  useEffect(() => {
+    if (location && !map) {
+      console.log('Initializing Leaflet map');
+      const newMap = L.map('map').setView([location.lat, location.long], 15);
+      const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      const attribution = 'Designed and developed by MarkX Digital';
+
+      const tiles = L.tileLayer(tileUrl, { attribution });
+      tiles.addTo(newMap);
+
+      const newMarker = L.marker([location.lat, location.long]).addTo(newMap);
+      setMarker(newMarker); // Set the marker instance to state
+
+      setMap(newMap); // Set the map instance to state
+    } else if (location && map) {
+      console.log('Updating marker position on the map');
+      marker.setLatLng([location.lat, location.long]);
+    }
+  }, [location, map, marker]);
+
+  return (
+    // <>
+    //   <div className='text-5xl'>Student</div>
+    //   <div>You are User: {user.name}</div>
+    //   <div>{senderEmail} is Sharing their location</div>
+    //   <div id="map" style={{ width: '100%', height: '400px' }}></div> {/* Set width and height for map container */}
+    //   {location ? (
+    //     <div>
+    //       <p>Latitude: {location.lat}</p>
+    //       <p>Longitude: {location.long}</p>
+    //       <p>Accuracy: {location.accuracy}</p>
+    //       <p>Time: {timer}</p>
+    //     </div>
+    //   ) : (
+    //     <div>No one is sharing location</div>
+    //   )}
+    // </>
+    <>
+      <>
+        <div className="block p-6 bg-white border rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+          {location && location.lat && location.long && (
+            <MapContainer
+              center={[location.lat, location.long]}
+              zoom={18}
+              style={{ height: "400px", width: "100%" }}
+            >
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              <Marker position={[location.lat, location.long]} icon={customIcon}>
+                <Popup>
+                  A pretty CSS3 popup. <br /> Easily customizable.
+                </Popup>
+              </Marker>
+            </MapContainer>
+          )}
+        </div>
+        {location ? <>
+          <div className="coords flex align-middle justify-between mt-5">
+            <Coords label="Speed" value={`${location.speed} m/s`} />
+            <Coords label="Longitude" value={location.long} />
+            <Coords label="Latitude" value={location.lat} />
+            <Coords label="Accuracy" value={location.accuracy} />
+            <Coords label="Altitude" value={`${location.altitude} m`} />
+          </div></> : <>
+          not av</>}
+
+      </>
+    </>
+  );
+}
