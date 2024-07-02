@@ -85,7 +85,7 @@ export default function Rec() {
             <div className="m-3 p-2"><Coords  label="Longitude" value={location.long} /></div>
             <div className="m-3 p-2"><Coords  label="Latitude" value={location.lat} /></div>
             <div className="m-3 p-2"><Coords  label="Accuracy" value={location.accuracy ? <>{location.accuracy}</> : <></>} /></div>
-            <div className="m-3 p-2"><Coords  label="Last Updated" value={location.LastUpdated} /></div>
+            <div className="m-3 p-2"><Coords  label="Updated" value={location.LastUpdated.slice(0,9 )} /></div>
           </div>
             </>:<>
             {senderEmail} stopped sharing 

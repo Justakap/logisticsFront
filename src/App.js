@@ -8,6 +8,8 @@ import AddDriver from './components/AddDriver';
 import Choice from './components/Choice';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import DriverLogin from './components/Driver/DriverLogin';
+import StudentLogin from './components/Student/StudentLogin';
 
 
 
@@ -15,7 +17,7 @@ function App() {
 
   return (
     <>
-    
+
       <Router>
         <Routes>
           <Route path='/' exact element={<>
@@ -28,6 +30,14 @@ function App() {
           />
           <Route path='/login' exact element={<>
             <Login></Login>
+          </>}
+          />
+          <Route path='/driver/login' exact element={<>
+            <DriverLogin></DriverLogin>
+          </>}
+          />
+          <Route path='/student/login' exact element={<>
+            <StudentLogin/>
           </>}
           />
           <Route path='/signup' exact element={<>
