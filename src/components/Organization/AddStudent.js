@@ -4,8 +4,11 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'flowbite';
 import Sidebar from './Sidebar';
+import OrgValidate from './OrgValidate';
 
 export const AddStudent = () => {
+  const user = OrgValidate();
+
   const pwdGen = (length) => {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -20,7 +23,7 @@ export const AddStudent = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    org: '',
+    org: user._id,
     contact: '',
     emergencyContact: '',
     stop: '',
@@ -56,18 +59,17 @@ export const AddStudent = () => {
       const selectedStop = stops.find((stop) => stop._id === formData.stop);
 
       if (selectedStop) {
-        setFormData({
+        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/add-student`, {
           ...formData,
           stop: selectedStop._id,
+          org: user._id, // Ensure org is user._id when submitting
         });
-
-        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/add-student`, formData);
         toast.success('Student added successfully!');
 
         setFormData({
           name: '',
           email: '',
-          org: '',
+          org: user._id, // Reset org to user._id
           contact: '',
           emergencyContact: '',
           stop: '',
@@ -119,20 +121,6 @@ export const AddStudent = () => {
               />
             </div>
             <div>
-              <label htmlFor="organization" className="block mb-2 text-sm font-medium text-gray-900">
-                Organization
-              </label>
-              <input
-                type="text"
-                id="org"
-                value={formData.org}
-                onChange={handleChange}
-                className="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full p-2.5"
-                placeholder="Organization"
-                required
-              />
-            </div>
-            <div>
               <label htmlFor="contact" className="block mb-2 text-sm font-medium text-gray-900">
                 Contact
               </label>
@@ -160,19 +148,7 @@ export const AddStudent = () => {
                 required
               />
             </div>
-            <div>
-              <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">
-                Password
-              </label>
-              <input
-                type="text"
-                id="password"
-                value={formData.password}
-                onChange={handleChange}
-                disabled
-                className="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full p-2.5"
-              />
-            </div>
+          
             <div>
               <label htmlFor="stop" className="block mb-2 text-sm font-medium text-gray-900">
                 Stop

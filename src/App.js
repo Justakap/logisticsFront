@@ -16,11 +16,52 @@ import AddBus from './components/Organization/AddBus';
 import AddStops from './components/Organization/AddStop';
 import AddDriver from './components/Organization/AddDriver';
 import AddRoute from './components/Organization/AddRoute';
+import OrgSignup from './components/Organization/OrgSignup';
+import OrganizationLogin from './components/Organization/OrganizationLogin';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+
+
 
 
 
 function App() {
+  const [driver, setDriver] = useState([])
+  const [route, setRoutes] = useState([])
+  const [student, setStudents] = useState([])
+  const [stop, setStops] = useState([])
+  const [vehicle, setVehicle] = useState([])
 
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/driver`)
+      .then(response => setDriver(response.data))
+
+      .catch(err => console.error(err));
+  }, []);
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/route`)
+      .then(response => setRoutes(response.data))
+
+      .catch(err => console.error(err));
+  }, []);
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/student`)
+      .then(response => setStudents(response.data))
+
+      .catch(err => console.error(err));
+  }, []);
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/stops`)
+      .then(response => setStops(response.data))
+
+      .catch(err => console.error(err));
+  }, []);
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/vehicle`)
+      .then(response => setVehicle(response.data))
+
+      .catch(err => console.error(err));
+  }, []);
   return (
     <>
 
@@ -60,73 +101,99 @@ function App() {
           />
           {/* home
  */}
+
+
+          <Route path='/org/login' exact element={<>
+            <div className="flex">
+
+              <div className="flex-grow"> {/* AddStudent takes remaining space */}
+                <OrganizationLogin></OrganizationLogin>
+              </div>
+            </div>
+          </>}
+          />
+          <Route path='/org/signup' exact element={<>
+            <div className="flex">
+
+              <div className="flex-grow"> {/* AddStudent takes remaining space */}
+                <OrgSignup />
+              </div>
+            </div>
+          </>}
+          />
           <Route path='/org/home' exact element={<>
-            <Sidebar></Sidebar>
-            <Home></Home>
+            <div className="flex">
+              <div className=""> {/* Fixed width for Sidebar */}
+                <Sidebar />
+              </div>
+              <div className="flex-grow"> {/* AddStudent takes remaining space */}
+                <Home driver={driver} student={student} route={route} stops={stop} vehicle={vehicle} />
+              </div>
+            </div>
           </>}
           />
           <Route path='/org/AddStudent' exact element={<>
             <div className="flex">
-            <div className=""> {/* Fixed width for Sidebar */}
-              <Sidebar />
+              <div className=""> {/* Fixed width for Sidebar */}
+                <Sidebar />
+              </div>
+              <div className="flex-grow"> {/* AddStudent takes remaining space */}
+                <AddStudent />
+              </div>
             </div>
-            <div className="flex-grow"> {/* AddStudent takes remaining space */}
-              <AddStudent />
-            </div>
-          </div>
           </>}
           />
-           <Route path='/org/AddVehicle' exact element={
-      <>
-        <div className="flex">
-          <div className=""> {/* Fixed width for Sidebar */}
-            <Sidebar />
-          </div>
-          <div className="flex-grow"> {/* AddBus takes remaining space */}
-            <AddBus />
-          </div>
-        </div>
-      </>
-    } />
+          <Route path='/org/AddVehicle' exact element={
+            <>
+              <div className="flex">
+                <div className=""> {/* Fixed width for Sidebar */}
+                  <Sidebar />
+                </div>
+                <div className="flex-grow"> {/* AddBus takes remaining space */}
+                  <AddBus />
+                </div>
+              </div>
+            </>
+          } />
 
-    <Route path='/org/AddStop' exact element={
-      <>
-        <div className="flex">
-          <div className=""> {/* Fixed width for Sidebar */}
-            <Sidebar />
-          </div>
-          <div className="flex-grow"> {/* AddStops takes remaining space */}
-            <AddStops />
-          </div>
-        </div>
-      </>
-    } />
+          <Route path='/org/AddStop' exact element={
+            <>
+              <div className="flex">
+                <div className=""> {/* Fixed width for Sidebar */}
+                  <Sidebar />
+                </div>
+                <div className="flex-grow"> {/* AddStops takes remaining space */}
+                  <AddStops />
+                </div>
+              </div>
+            </>
+          } />
 
-    <Route path='/org/AddDriver' exact element={
-      <>
-        <div className="flex">
-          <div className=""> {/* Fixed width for Sidebar */}
-            <Sidebar />
-          </div>
-          <div className="flex-grow"> {/* AddDriver takes remaining space */}
-            <AddDriver />
-          </div>
-        </div>
-      </>
-    } />
+          <Route path='/org/AddDriver' exact element={
+            <>
+              <div className="flex">
+                <div className=""> {/* Fixed width for Sidebar */}
+                  <Sidebar />
+                </div>
+                <div className="flex-grow"> {/* AddDriver takes remaining space */}
+                  <AddDriver />
+                </div>
+              </div>
+            </>
+          } />
 
-    <Route path='/org/AddRoute' exact element={
-      <>
-        <div className="flex">
-          <div className=""> {/* Fixed width for Sidebar */}
-            <Sidebar />
-          </div>
-          <div className="flex-grow"> {/* AddRoute takes remaining space */}
-            <AddRoute />
-          </div>
-        </div>
-      </>
-    } />
+          <Route path='/org/AddRoute' exact element={
+            <>
+              <div className="flex">
+                <div className=""> {/* Fixed width for Sidebar */}
+                  <Sidebar />
+                </div>
+                <div className="flex-grow"> {/* AddRoute takes remaining space */}
+                  <AddRoute />
+                </div>
+              </div>
+            </>
+          } />
         </Routes>
       </Router>
     </>

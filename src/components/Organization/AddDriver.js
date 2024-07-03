@@ -3,20 +3,21 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'flowbite';
+import OrgValidate from './OrgValidate';
 
 const AddDriver = () => {
+  const user = OrgValidate();
+
   // Function to generate random password
-  function pwdGen(length) {
+  const pwdGen = (length) => {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
-    let counter = 0;
-    while (counter < length) {
+    for (let i = 0; i < length; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      counter += 1;
     }
     return result;
-  }
+  };
 
   const [stops, setStops] = useState([]);
   const [formData, setFormData] = useState({
@@ -24,10 +25,21 @@ const AddDriver = () => {
     email: '',
     password: pwdGen(8), // Generate random password on component load
     contact: '',
-    org: 'SKIT', // Assuming org is fixed for all drivers
+    org: '', // Initialize with an empty string
     stop: '',
   });
   const [loading, setLoading] = useState(false);
+
+  // Update formData org field once user is available
+  useEffect(() => {
+    if (user._id) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        org: user._id,
+      }));
+    }
+  }, [user]);
+  console.log(formData)
 
   useEffect(() => {
     const fetchStops = async () => {
@@ -58,17 +70,17 @@ const AddDriver = () => {
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/add-driver`, formData);
       toast.success('Driver added successfully!');
 
-      // Clear form data after successful submission (excluding password)
+      // Clear form data after successful submission (excluding password and org)
       setFormData({
-        ...formData,
         name: '',
         email: '',
-        password: pwdGen(8), // Generate random password on component load
+        password: pwdGen(8), // Generate new random password
         contact: '',
-        org: 'SKIT', // Assuming org is fixed for all drivers
+        org: user._id, // Reset org to user._id
         stop: '',
       });
     } catch (error) {
+      console.log(error)
       toast.error('Error adding driver.');
     } finally {
       setLoading(false);
@@ -109,18 +121,7 @@ const AddDriver = () => {
               required
             />
           </div>
-          <div>
-            <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">
-              Password
-            </label>
-            <input
-              type="text"
-              id="password"
-              value={formData.password}
-              disabled
-              className="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full p-2.5"
-            />
-          </div>
+          
           <div>
             <label htmlFor="contact" className="block mb-2 text-sm font-medium text-gray-900">
               Contact
