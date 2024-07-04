@@ -20,6 +20,7 @@ import OrgSignup from './components/Organization/OrgSignup';
 import OrganizationLogin from './components/Organization/OrganizationLogin';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import Allot from './components/Organization/Allot';
 
 
 
@@ -182,7 +183,7 @@ function App() {
             </>
           } />
 
-          <Route path='/org/AddRoute' exact element={
+          <Route path='/org/AddRoute/*' exact element={
             <>
               <div className="flex">
                 <div className=""> {/* Fixed width for Sidebar */}
@@ -190,6 +191,18 @@ function App() {
                 </div>
                 <div className="flex-grow"> {/* AddRoute takes remaining space */}
                   <AddRoute />
+                </div>
+              </div>
+            </>
+          } />
+          <Route path='/org/Allot' exact element={
+            <>
+              <div className="flex">
+                <div className=""> {/* Fixed width for Sidebar */}
+                  <Sidebar />
+                </div>
+                <div className="flex-grow"> {/* AddRoute takes remaining space */}
+                  <Allot></Allot>
                 </div>
               </div>
             </>

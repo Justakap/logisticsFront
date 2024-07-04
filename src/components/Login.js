@@ -153,7 +153,7 @@ export default function Login() {
         <div className="mt-8"></div>
 
       </div>
-v0.2
+v0.3
     </>
 
 

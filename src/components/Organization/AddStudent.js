@@ -161,7 +161,7 @@ export const AddStudent = () => {
                 className="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full p-2.5"
               >
                 <option value="">Select Stop</option>
-                {stops.map((stop) => (
+                {stops.filter((e=>e.org===user._id)).map((stop) => (
                   <option key={stop._id} value={stop._id}>
                     {stop.name}
                   </option>
