@@ -84,7 +84,7 @@ export default function Sender() {
   }
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(`${process.env.REACT_APP_API_OWN_URL}/student/${currentRoomCode}`);
+    navigator.clipboard.writeText(`${process.env.REACT_APP_API_OWN_URL}/reciever/${currentRoomCode}`);
 
   }
 
@@ -95,7 +95,7 @@ export default function Sender() {
       {user ? (<>
         <div>Username: {user.name}</div>
         Location Sharing Link :
-        <Link className=' text-blue-500 cursor-pointer hover:text-blue-600' to={`${process.env.REACT_APP_API_OWN_URL}/student/${currentRoomCode}`}>{`${process.env.REACT_APP_API_OWN_URL}/student/${currentRoomCode}`}</Link><br />
+        <Link className=' text-blue-500 cursor-pointer hover:text-blue-600' to={`${process.env.REACT_APP_API_OWN_URL}/reciever/${currentRoomCode}`}>{`${process.env.REACT_APP_API_OWN_URL}/reciever/${currentRoomCode}`}</Link><br />
         <button onClick={copyToClipboard} className='mx-2 mt-3 p-2 bg-blue-500 text-white font-semibold rounded-md '> Copy Link</button>
         <button onClick={stopSharing} className=' p-2 bg-red-500 text-white font-semibold rounded-md '> Stop Sharing</button>
       </>

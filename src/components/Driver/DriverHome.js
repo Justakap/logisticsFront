@@ -51,7 +51,7 @@ export default function DriverHome(props) {
             } else {
                 // console.error('Stop not found');
             }
-     
+
         }
     }, [org, stop, user]);
 
@@ -66,7 +66,8 @@ export default function DriverHome(props) {
         } else {
 
             try {
-                const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/add-trip`, { owner: user.email, org: user.org });
+                const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/add-trip`,
+                    { owner: user.email, org: user.org, vehicleId: user.vehicleNo });
 
                 if (res.data.message === "added") {
                     // Navigate to the driver page with the room code

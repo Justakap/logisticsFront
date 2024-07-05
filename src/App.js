@@ -24,6 +24,7 @@ import Allot from './components/Organization/Allot';
 import DriverHome from './components/Driver/DriverHome';
 import DriverLocation from './components/Driver/DriverLocation';
 import StudentHome from './components/Student/StudentHome';
+import StudentTracking from './components/Student/StudentTracking';
 
 
 
@@ -107,7 +108,7 @@ function App() {
             <Sender></Sender>
           </>}
           />
-          <Route path='/student/:senderId' exact element={<>
+          <Route path='/reciever/:senderId' exact element={<>
             <Rec></Rec>
           </>}
           />
@@ -241,6 +242,10 @@ function App() {
           />
           <Route path='/student/home' exact element={<>
             <StudentHome stop={stop} org={org} vehicle={vehicle} />
+          </>}
+          />
+          <Route path='/student/:senderId' exact element={<>
+          <StudentTracking></StudentTracking>
           </>}
           />
 
