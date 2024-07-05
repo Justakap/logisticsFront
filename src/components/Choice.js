@@ -26,7 +26,7 @@ export default function Choice() {
 
             if (res.data.message === "added") {
                 // Navigate to the driver page with the room code
-                navigate(`/driver/${res.data.roomCode}`);
+                navigate(`/sender/${res.data.roomCode}`);
             } else {
                 alert("Already Exist");
             }

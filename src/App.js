@@ -21,6 +21,9 @@ import OrganizationLogin from './components/Organization/OrganizationLogin';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Allot from './components/Organization/Allot';
+import DriverHome from './components/Driver/DriverHome';
+import DriverLocation from './components/Driver/DriverLocation';
+import StudentHome from './components/Student/StudentHome';
 
 
 
@@ -28,14 +31,22 @@ import Allot from './components/Organization/Allot';
 
 function App() {
   const [driver, setDriver] = useState([])
+  const [org, setOrg] = useState([])
   const [route, setRoutes] = useState([])
   const [student, setStudents] = useState([])
   const [stop, setStops] = useState([])
+  const [trips, setTrips] = useState([])
   const [vehicle, setVehicle] = useState([])
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_BASE_URL}/driver`)
       .then(response => setDriver(response.data))
+
+      .catch(err => console.error(err));
+  }, []);
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/org`)
+      .then(response => setOrg(response.data))
 
       .catch(err => console.error(err));
   }, []);
@@ -54,6 +65,12 @@ function App() {
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_BASE_URL}/stops`)
       .then(response => setStops(response.data))
+
+      .catch(err => console.error(err));
+  }, []);
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/trips`)
+      .then(response => setTrips(response.data))
 
       .catch(err => console.error(err));
   }, []);
@@ -80,19 +97,13 @@ function App() {
             <Login></Login>
           </>}
           />
-          <Route path='/driver/login' exact element={<>
-            <DriverLogin></DriverLogin>
-          </>}
-          />
-          <Route path='/student/login' exact element={<>
-            <StudentLogin />
-          </>}
-          />
+
+
           <Route path='/signup' exact element={<>
             <Signup></Signup>
           </>}
           />
-          <Route path='/driver/:userId' exact element={<>
+          <Route path='/sender/:userId' exact element={<>
             <Sender></Sender>
           </>}
           />
@@ -207,6 +218,32 @@ function App() {
               </div>
             </>
           } />
+
+
+          {/* Driver */}
+
+          <Route path='/driver/login' exact element={<>
+            <DriverLogin></DriverLogin>
+          </>}
+          />
+          <Route path='/driver/home' exact element={<>
+            <DriverHome org={org} stop={stop} trips={trips}> </DriverHome>
+          </>}
+          />
+          <Route path='/driver/:userId' exact element={<>
+            <DriverLocation trips={trips}></DriverLocation>
+          </>}
+          />
+
+          <Route path='/student/login' exact element={<>
+            <StudentLogin />
+          </>}
+          />
+          <Route path='/student/home' exact element={<>
+            <StudentHome stop={stop} org={org} vehicle={vehicle} />
+          </>}
+          />
+
         </Routes>
       </Router>
     </>
