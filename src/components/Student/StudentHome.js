@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import StudentValidate from './StudentValidate';
 
 export default function StudentHome(props) {
     const { org, stop, vehicle } = props;
@@ -16,19 +17,7 @@ export default function StudentHome(props) {
     }, []);
 
     // const user = studentValidate()
-    const user = {
-        "_id": {
-            "$oid": "6686dd16d53e11a88e3caacd"
-        },
-        "email": "ANANT@GMAIL.COM",
-        "password": "YOif6sqz",
-        "name": "ANANT KHANDELWAL",
-        "contact": "9898989898",
-        "emergencyContact": "98988989898",
-        "org": "6686dbc4d53e11a88e3caa6e",
-        "stop": "6686dc4dd53e11a88e3caab6",
-        "__v": 0
-    };
+    const user = StudentValidate()
 
     useEffect(() => {
         if (org && stop && user) {

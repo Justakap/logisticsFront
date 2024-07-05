@@ -6,9 +6,10 @@ import Coords from './Coords';
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from 'leaflet';
 import customMarkerIcon from "../../pin.png";
+import StudentValidate from './StudentValidate';
 
 export default function StudentTracking() {
-    // const user = Validate();
+    const user = StudentValidate();
     const { senderId } = useParams();
 
     const [location, setLocation] = useState(null);

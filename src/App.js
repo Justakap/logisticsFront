@@ -25,6 +25,7 @@ import DriverHome from './components/Driver/DriverHome';
 import DriverLocation from './components/Driver/DriverLocation';
 import StudentHome from './components/Student/StudentHome';
 import StudentTracking from './components/Student/StudentTracking';
+import TripsBreakdown from './components/Organization/TripsBreakdown';
 
 
 
@@ -140,7 +141,18 @@ function App() {
                 <Sidebar />
               </div>
               <div className="flex-grow"> {/* AddStudent takes remaining space */}
-                <Home driver={driver} student={student} route={route} stops={stop} vehicle={vehicle} />
+                <Home driver={driver} student={student} route={route} stops={stop} vehicle={vehicle} trips={trips} />
+              </div>
+            </div>
+          </>}
+          />
+          <Route path='/org/TripsBreakdown' exact element={<>
+            <div className="flex">
+              <div className=""> {/* Fixed width for Sidebar */}
+                <Sidebar />
+              </div>
+              <div className="flex-grow"> {/* AddStudent takes remaining space */}
+                <TripsBreakdown driver={driver}  route={route} stops={stop} vehicle={vehicle} trips={trips} />
               </div>
             </div>
           </>}

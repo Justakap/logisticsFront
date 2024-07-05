@@ -2,9 +2,10 @@ import React from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import OrgValidate from './OrgValidate';
+import { Link } from 'react-router-dom';
 
 export default function Home(props) {
-  const { driver,student,stops,route,vehicle } = props
+  const { driver,student,stops,route,vehicle,trips } = props
   const user = OrgValidate()
 
 
@@ -19,6 +20,8 @@ export default function Home(props) {
   const orgStopNumber = orgStop.length
   const orgVehicle = vehicle.filter((e=>e.org===user._id))
   const orgVehicleNumber = orgVehicle.length
+  const orgTrips = trips.filter((e=>e.org===user._id))
+  const orgTripsNumber = orgTrips.length
 
 
   return (
@@ -58,12 +61,12 @@ export default function Home(props) {
                 </div>
                 <div className="col-span-12 sm:col-span-12 md:col-span-4 lg:col-span-4 xxl:col-span-4">
                   <div className="p-4">
-                    <p className="text-sm text-gray-400">Monthly Target Users : 100</p>
+                    <p className="text-sm text-gray-400">Monthly Trips  : 100</p>
                     <div className="shadow w-full bg-gray-100 mt-2">
-                      <div className="bg-indigo-600 text-xs leading-none py-1 text-center text-white" style={{ width: `${"22"}%` }}></div>
+                      <div className="bg-indigo-600 text-xs leading-none py-1 text-center text-white" style={{ width: `${orgTripsNumber}%` }}></div>
 
                     </div>
-                    <p className="text-xs font-semibold text-gray-400 mt-2">Progress : {"22"} %</p>
+                    <p className="text-xs font-semibold text-gray-400 mt-2">Progress : {orgTripsNumber} %</p>
                   </div>
                 </div>
               </div>
@@ -76,15 +79,15 @@ export default function Home(props) {
                         Total Kilometers Driven
                       </h3>
                       <h3 className="text-center text-white text-3xl mt-2 font-bold">
-                        {33 * 299} Km
+                        {33 * 9} Km
                       </h3>
                       <div className="flex space-x-4 mt-4">
                         <button className="block uppercase mx-auto shadow bg-white text-indigo-600 focus:shadow-outline focus:outline-none hover:opacity-80   text-xs py-3 px-4 rounded font-bold">
                           Fuel
                         </button>
-                        <button className="block uppercase mx-auto shadow bg-indigo-800 hover:bg-indigo-700 focus:shadow-outline focus:outline-none text-white text-xs py-3 px-4 rounded font-bold">
+                        <Link to={"/org/FuelBreakdown"} className="block uppercase mx-auto shadow bg-indigo-800 hover:bg-indigo-700 focus:shadow-outline focus:outline-none text-white text-xs py-3 px-4 rounded font-bold">
                           Breakdown
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -97,15 +100,15 @@ export default function Home(props) {
                         Total Trips Taken
                       </h3>
                       <h3 className="text-center text-white text-3xl mt-2 font-bold">
-                        {33 * 2} 
+                        {orgTripsNumber}
                       </h3>
                       <div className="flex space-x-4 mt-4">
                         {/* <button className="block uppercase mx-auto shadow bg-white text-indigo-600 focus:shadow-outline focus:outline-none  text-xs py-3 px-4 rounded font-bold">
                           Transfer
                         </button> */}
-                        <button className="block uppercase mx-auto shadow bg-indigo-800 hover:bg-indigo-700 focus:shadow-outline focus:outline-none text-white text-xs py-3 px-4 rounded font-bold">
+                     <Link to={"/org/TripsBreakdown"} className="block uppercase mx-auto shadow bg-indigo-800 hover:bg-indigo-700 focus:shadow-outline focus:outline-none text-white text-xs py-3 px-4 rounded font-bold">
                           Breakdown
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   </div>
