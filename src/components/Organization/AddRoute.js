@@ -57,6 +57,9 @@ const AddRoute = () => {
         id: stop.stopId,
         name: allStops.find((s) => s._id === stop.stopId)?.name,
         sequence: stop.sequence,
+        lat : allStops.find((s) => s._id === stop.stopId)?.lat,
+        long : allStops.find((s) => s._id === stop.stopId)?.long,
+
       })),
     };
 

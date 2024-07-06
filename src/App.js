@@ -240,7 +240,7 @@ function App() {
           </>}
           />
           <Route path='/driver/home' exact element={<>
-            <DriverHome org={org} stop={stop} trips={trips}> </DriverHome>
+            <DriverHome org={org} stop={stop} trips={trips}route={route}> </DriverHome>
           </>}
           />
           <Route path='/driver/:userId' exact element={<>
