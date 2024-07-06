@@ -13,7 +13,7 @@ export default function DriverLocation() {
     const user = DriverValidate();
 
     const socket = useMemo(() => io(process.env.REACT_APP_API_BASE_URL), []);
-  
+
 
     const [trips, setTrips] = useState([]);
     const [currentTrip, setCurrentTrip] = useState(null);
@@ -45,24 +45,24 @@ export default function DriverLocation() {
         if (currentTripCode) {
             socket.emit('org-joinDriverRoom', currentTripCode);
 
-            socket.on(`org-studentJoined`, (data) => {
-                console.log('New Student Joined:', data);
-                console.log(`Emitting location: ${location.lat}, ${location.long}, Accuracy: ${location.accuracy} LastUpdated: ${location.LastUpdated}`);
+            // socket.on(`org-studentJoined`, (data) => {
+            //     console.log('New Student Joined:', data);
+            //     console.log(`Emitting location: ${location.lat}, ${location.long}, Accuracy: ${location.accuracy} LastUpdated: ${location.LastUpdated}`);
 
-                socket.emit('org-locationUpdate', {
-                    userId: user._id,
-                    lat: location.lat,
-                    long: location.long,
-                    accuracy: location.accuracy,
-                    
-                });
-                // Handle student joined event
-            });
+            //     socket.emit('org-locationUpdate', {
+            //         userId: user._id,
+            //         lat: location.lat,
+            //         long: location.long,
+            //         accuracy: location.accuracy,
+
+            //     });
+            //     // Handle student joined event
+            // });
 
             return () => {
-                socket.off('org-studentJoined');
-                socket.off('org-locationUpdate');
-                socket.off('org-locationEnded');
+                // socket.off('org-studentJoined');
+                // socket.off('org-locationUpdate');
+                // socket.off('org-locationEnded');
             };
         }
     }, [socket, currentTripCode, navigate]);
@@ -81,7 +81,7 @@ export default function DriverLocation() {
                 const date = new Date(position.timestamp);
                 const LastUpdated = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} ${date.getDate()}-${date.toLocaleString('default', { month: 'long' })}`;
 
-                // console.log(`Emitting location: ${lat}, ${long}, Accuracy: ${accuracy} LastUpdated: ${LastUpdated}`);
+                console.log(`Emitting location: ${lat}, ${long}, Accuracy: ${accuracy} LastUpdated: ${LastUpdated}`);
                 if (user && user._id && currentTripCode) {
                     socket.emit('org-locationUpdate', {
                         userId: user._id,
@@ -95,15 +95,12 @@ export default function DriverLocation() {
                         speed,
                         LastUpdated
                     });
-                    socket.on(`studentJoined_${currentTripCode}`, (data) => {
-                console.log(`Student joined room driver_${currentTripCode}:`, data);
-                // Handle student joined event
-            });
+
                 }
 
                 if (currentTrip && nextStopIndex < currentTrip.stop.length) {
                     const nextStop = currentTrip.stop[nextStopIndex];
-                    const radius = 50; // Assuming radius is 100 meters
+                    const radius = 100; // Assuming radius is 100 meters
                     const hasReachedNextStop = checkPointInCircle(nextStop, radius, { long, lat });
 
                     if (hasReachedNextStop) {
@@ -180,20 +177,20 @@ export default function DriverLocation() {
                     <button onClick={copyToClipboard} className='mx-2 mt-3 p-2 bg-blue-500 text-white font-semibold rounded-md'>Copy Link</button>
                     <button onClick={stopSharing} className='p-2 bg-red-500 text-white font-semibold rounded-md'>Stop Sharing</button>
                     <div className="block p-6 bg-white border rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                    <MapContainer
-    center={[location.lat || 0, location.long || 0]}
-    zoom={18}
-    style={{ height: "400px", width: "100%" }}
->
-    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-    {location.lat !== null && location.long !== null && (
-        <Marker position={[location.lat, location.long]} icon={customIcon}>
-            <Popup>
-                A pretty CSS3 popup. <br /> Easily customizable.
-            </Popup>
-        </Marker>
-    )}
-</MapContainer>
+                        <MapContainer
+                            center={[location.lat || 0, location.long || 0]}
+                            zoom={18}
+                            style={{ height: "400px", width: "100%" }}
+                        >
+                            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                            {location.lat !== null && location.long !== null && (
+                                <Marker position={[location.lat, location.long]} icon={customIcon}>
+                                    <Popup>
+                                        A pretty CSS3 popup. <br /> Easily customizable.
+                                    </Popup>
+                                </Marker>
+                            )}
+                        </MapContainer>
 
                     </div>
                     <div>Prev Stop: {currentTrip && nextStopIndex > 0 ? currentTrip.stop[nextStopIndex - 1].name : 'None'}</div>
