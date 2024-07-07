@@ -97,6 +97,8 @@ export default function DriverLocation() {
                     });
 
                 }
+                console.log(Date.now())
+
 
                 if (currentTrip && nextStopIndex < currentTrip.stop.length) {
                     const nextStop = currentTrip.stop[nextStopIndex];
@@ -105,7 +107,9 @@ export default function DriverLocation() {
 
                     if (hasReachedNextStop) {
                         console.log("Reached stop:", nextStop.name);
-                        axios.put(`${process.env.REACT_APP_API_BASE_URL}/update-stop/${currentTrip._id}/${nextStop.id}`, { reached: true })
+
+
+                        axios.put(`${process.env.REACT_APP_API_BASE_URL}/update-stop/${currentTrip._id}/${nextStop.id}`, { reached: true, arrivalTime: Date.now() })
                             .then(response => {
                                 console.log("Stop updated:", nextStop.name);
                                 setNextStopIndex(nextStopIndex + 1);
