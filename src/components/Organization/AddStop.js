@@ -87,6 +87,30 @@ const AddStops = () => {
         } catch (err) {
           setError("Error fetching locations. Please try again.");
         }
+        // const options = {
+        //   method: 'GET',
+        //   url: 'https://maps-data.p.rapidapi.com/searchmaps.php',
+        //   params: {
+        //     query: search,
+        //     limit: '20',
+        //     lang: 'en',
+        //     offset: '0',
+        //     zoom: '13'
+        //   },
+        //   headers: {
+        //     'x-rapidapi-key': 'de102aab60mshcfc1e64ee1fa548p1c1ee8jsn6ca8295c4119',
+        //     'x-rapidapi-host': 'maps-data.p.rapidapi.com'
+        //   }
+        // };
+
+        // try {
+        //   const response = await axios.request(options);
+        //   console.log(response.data);
+        //   setSearchResults(response.data);
+        // } catch (error) {
+        //   console.error(error);
+        // }
+
       };
       fetchLocations();
     }
@@ -107,7 +131,7 @@ const AddStops = () => {
       name: stopName,
       org: user._id,
       lat: selectedLocation.lat,
-      long: selectedLocation.lon,
+      long: selectedLocation.lng,
     };
     if (!stopName || !selectedLocation) {
       toast.error("All fields are required");
@@ -196,15 +220,21 @@ const AddStops = () => {
               {showResults && (
                 <div className="flex-1 overflow-y-auto mb-4">
                   <ul>
-                    {searchResults.map((result, index) => (
-                      <li
-                        key={index}
-                        className="cursor-pointer hover:bg-gray-200 p-2 rounded"
-                        onClick={() => handleResultClick(result)}
-                      >
-                        {result.display_name}
-                      </li>
-                    ))}
+                    {searchResults && Array.isArray(searchResults) && (
+                      <div className="flex-1 overflow-y-auto mb-4">
+                        <ul>
+                          {searchResults.map((result, index) => (
+                            <li
+                              key={index}
+                              className="cursor-pointer hover:bg-gray-200 p-2 rounded"
+                              onClick={() => handleResultClick(result)}
+                            >
+                              {result.display_name}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </ul>
                 </div>
               )}
@@ -263,7 +293,7 @@ const AddStops = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {stops.filter((e=>e.org===user._id)).map((stop, index) => (
+            {stops.filter((e => e.org === user._id)).map((stop, index) => (
               <tr key={index}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {stop.name}

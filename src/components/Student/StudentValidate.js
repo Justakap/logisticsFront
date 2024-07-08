@@ -24,7 +24,6 @@ const StudentValidate = () => {
       history('/student/login');
     }
   }, [token, _id, history]);
-
   return user;
 };
 

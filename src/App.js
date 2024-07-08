@@ -23,9 +23,14 @@ import axios from 'axios';
 import Allot from './components/Organization/Allot';
 import DriverHome from './components/Driver/DriverHome';
 import DriverLocation from './components/Driver/DriverLocation';
-import StudentHome from './components/Student/StudentHome';
+// import StudentHome from './components/Student/StudentHome';
 import StudentTracking from './components/Student/StudentTracking';
 import TripsBreakdown from './components/Organization/TripsBreakdown';
+import HomePage from './components/HomePage';
+import StudentSidebar from "./components/Student/StudentSidebar";
+import TrackLocation from "./components/Student/TrackLocation";
+import ViewLocation from "./components/Student/ViewLocation";
+import Profile from './components/Student/Profile';
 
 
 
@@ -88,6 +93,10 @@ function App() {
       <Router>
         <Routes>
           <Route path='/' exact element={<>
+            <HomePage></HomePage>
+          </>}
+          />
+          <Route path='/choice' exact element={<>
             <Choice></Choice>
           </>}
           />
@@ -152,7 +161,7 @@ function App() {
                 <Sidebar />
               </div>
               <div className="flex-grow"> {/* AddStudent takes remaining space */}
-                <TripsBreakdown driver={driver}  route={route} stops={stop} vehicle={vehicle} trips={trips} />
+                <TripsBreakdown driver={driver} route={route} stops={stop} vehicle={vehicle} trips={trips} />
               </div>
             </div>
           </>}
@@ -240,7 +249,7 @@ function App() {
           </>}
           />
           <Route path='/driver/home' exact element={<>
-            <DriverHome org={org} stop={stop} trips={trips}route={route}> </DriverHome>
+            <DriverHome org={org} stop={stop} trips={trips} route={route}> </DriverHome>
           </>}
           />
           <Route path='/driver/:userId' exact element={<>
@@ -252,14 +261,65 @@ function App() {
             <StudentLogin />
           </>}
           />
-          <Route path='/student/home' exact element={<>
-            <StudentHome stop={stop} org={org} vehicle={vehicle} />
-          </>}
+          <Route
+            path="/student/home"
+            exact
+            element={
+              <div className="flex">
+                <div className="">
+                  <StudentSidebar />
+                </div>
+                <div className="flex-grow">
+                  <Profile />
+                </div>
+              </div>
+            }
           />
           <Route path='/student/:senderId' exact element={<>
-          <StudentTracking></StudentTracking>
+            <StudentTracking></StudentTracking>
           </>}
           />
+          <Route
+            path="/student/TrackLocation"
+            exact
+            element={
+              <div className="flex">
+                <div className="">
+                  <StudentSidebar />
+                </div>
+                <div className="flex-grow">
+                  <TrackLocation />
+                </div>
+              </div>
+            }
+          />
+          <Route
+            path="/student/ViewLocation/:senderId/:routeId"
+            exact
+            element={
+              <div className="block sm:flex">
+                <div className="">
+                  <StudentSidebar />
+                </div>
+                <div className="">
+                  <ViewLocation />
+                </div>
+              </div>
+            }
+          />
+          <Route
+            path="/student/*"
+            exact
+            element={
+              <div className="flex">
+                <div className="">
+                  <StudentSidebar />
+                </div>
+                <div className="flex-grow">{/* <AddRoute /> */}</div>
+              </div>
+            }
+          />
+
 
         </Routes>
       </Router>

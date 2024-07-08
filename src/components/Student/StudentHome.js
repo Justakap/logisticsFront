@@ -45,7 +45,10 @@ export default function StudentHome(props) {
             <h2 className='text-xl'>Student Contact: {user.contact}</h2>
             <h2 className='text-xl'>Student Emergency Contact: {user.emergencyContact}</h2>
             <h2 className='text-xl mb-8'>Student Alloted Route: {"2"}</h2>
-            <div className='m-4'>List Of Available Vehicles</div>
+
+            <Link to={"/student/tracklocation"} className='text-xl mb-8 mx-4'>Track Vehicle</Link>
+            
+            {/* <div className='m-4'>List Of Available Vehicles</div>
             {vehicle.filter(e => e.org === user.org).map(e => {
                 const trip = trips.find(f => f.vehicleId === e._id && f.currentStatus);
                 return (
@@ -62,7 +65,7 @@ export default function StudentHome(props) {
                         </div>
                     </div>
                 );
-            })}
+            })} */}
         </>
     );
 }
