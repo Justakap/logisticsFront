@@ -111,7 +111,6 @@ const ViewLocation = () => {
       });
       fetchStops();
       checkCurrentStatus();
-      console.log("rec location")
     });
 
     setSocket(newSocket);
@@ -265,7 +264,7 @@ const ViewLocation = () => {
           <div className="speed relative -top-16 bg-gradient-to-r from-blue-800 to-blue-900 p-1 md:p-7 rounded-md shadow-lg text-center w-fit m-auto text-white flex justify-center items-center align-middle">
             <span className="mx-2">
               <strong>
-                {(coords && coords.speed ? Math.round(coords.speed) : 0) * 3.6} km / hr
+                {((coords && coords.speed ? (coords.speed) : 0) * 3.6).toFixed(2)} km / hr
               </strong>
             </span>
           </div>
