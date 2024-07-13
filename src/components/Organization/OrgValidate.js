@@ -18,10 +18,10 @@ const OrgValidate = () => {
           })
           .catch(err => console.log(err));
       } else {
-        history('/org/login');
+        history('/login');
       }
     } else {
-      history('/org/login');
+      history('/login');
     }
   }, [token, _id, history]);
 

@@ -1,11 +1,11 @@
 import React from "react";
-import { Link, useRoutes, useLocation } from "react-router-dom";
+import { Link, useRoutes, useLocation, Navigate, useNavigate } from "react-router-dom";
 import TrackLocation from "./TrackLocation";
 import ViewLocation from "./ViewLocation";
 
 const StudentSidebar = () => {
   const location = useLocation();
-
+  const navigate = useNavigate();
   let element = useRoutes([
     {
       path: "/student/TrackLocation",
@@ -19,7 +19,7 @@ const StudentSidebar = () => {
 
   return (
     <>
-      <button
+      {/* <button
         data-drawer-target="default-sidebar"
         data-drawer-toggle="default-sidebar"
         aria-controls="default-sidebar"
@@ -107,9 +107,15 @@ const StudentSidebar = () => {
         </div>
       </aside>
 
-      <div className="sm:ml-64">{element}</div>
+      <div className="sm:ml-64">{element}</div> */}
 
-      <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 sm:hidden">
+      <div
+        className={`fixed bottom-0 left-0 w-full h-16 bg-white border-t border-gray-200 sm:w-1/4 ${
+          location.pathname === "/student/home"
+            ? "bg-gray-100 text-red-500"
+            : "text-gray-600"
+        }`}
+      >
         <div className="grid h-full max-w-lg grid-cols-3 mx-auto font-medium">
           <Link
             to="/student/Home"
@@ -136,9 +142,9 @@ const StudentSidebar = () => {
           <Link
             to="/student/TrackLocation"
             className={`inline-flex flex-col items-center justify-center px-5 hover:bg-gray-100 group ${
-              location.pathname === "/student/TrackLocation"
-                ? "bg-gray-100 text-red-500"
-                : "text-gray-600"
+              location.pathname === "/student/ViewLocation/:senderId"
+                ? "-z-50"
+                : ""
             }`}
           >
             <svg
@@ -155,7 +161,7 @@ const StudentSidebar = () => {
             </span>
           </Link>
           <button
-            // onClick={Logout}
+            onClick={() => {localStorage.clear(); navigate("../../login")}}
             className={`inline-flex flex-col items-center justify-center px-5 hover:bg-gray-100 group ${
               location.pathname === "/org/Logout"
                 ? "bg-gray-100 text-gray-800"

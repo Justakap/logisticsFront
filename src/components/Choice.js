@@ -5,7 +5,16 @@ import Validate from './Validate';
 
 export default function Choice() {
     const navigate = useNavigate();
-    const user = Validate();
+    const user = {
+        "_id": {
+          "$oid": "668142222393ffbb34898c5b"
+        },
+        "name": "Abc",
+        "email": "abc@gmail",
+        "contact": "9999999",
+        "password": "123",
+        "__v": 0
+      }
 
     const [email, setEmail] = useState(user ? user.email : '');
 

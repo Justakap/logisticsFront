@@ -18,10 +18,10 @@ const DriverValidate = () => {
           })
           .catch(err => console.log(err));
       } else {
-        history('/driver/login');
+        history('/login');
       }
     } else {
-      history('/driver/login');
+      history('/login');
     }
   }, [token, _id, history]);
 

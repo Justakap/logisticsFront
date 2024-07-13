@@ -10,7 +10,16 @@ import { Link, useNavigate } from 'react-router-dom';
 
 export default function Sender() {
   const history = useNavigate()
-  const user = Validate();
+  const user = {
+    "_id": {
+      "$oid": "668142222393ffbb34898c5b"
+    },
+    "name": "Abc",
+    "email": "abc@gmail",
+    "contact": "9999999",
+    "password": "123",
+    "__v": 0
+  }
 
   const socket = useMemo(() => io(process.env.REACT_APP_API_BASE_URL), []);
 
@@ -59,7 +68,7 @@ export default function Sender() {
 
         console.log(`Emitting location: ${lat}, ${long}, Accuracy: ${accuracy} last; ${LastUpdated}`);
         if (user && user._id && currentRoomCode) {
-          socket.emit('locationUpdate', { userId: user._id, roomCode: currentRoomCode, lat, long, accuracy, altitude, altitudeAccuracy, heading, speed,LastUpdated });
+          socket.emit('locationUpdate', { userId: user._id, roomCode: currentRoomCode, lat, long, accuracy, altitude, altitudeAccuracy, heading, speed, LastUpdated });
         }
       },
       (error) => {

@@ -8,6 +8,8 @@ import AddBus from "./AddBus";
 import AddRoute from "./AddRoute";
 import OrgValidate from "./OrgValidate";
 import Allot from "./Allot";
+import EditRoutes from "./EditRoutes";
+import Changesseq from "./Changesseq";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -44,7 +46,14 @@ const Sidebar = () => {
       path: "/Allot",
       element: <Allot />,
     },
-    
+    {
+      path: "/EditRoutes",
+      element: <EditRoutes />,
+    },
+    {
+      path: "/EditRoutes/:id",
+      element: <Changesseq />,
+    },
   ]);
 
   return (
@@ -196,6 +205,26 @@ const Sidebar = () => {
                 <span className="ms-3 whitespace-nowrap">Manage Routes</span>
               </Link>
             </li>
+
+            <li>
+              <Link
+                to="/org/EditRoutes"
+                className={`flex items-center p-2 rounded-lg hover:bg-gray-100 group ${location.pathname === "/org/EditRoutes" ? "bg-gray-200" : "text-gray-900"}`}
+              >
+                <svg
+                  className="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="m17.418 3.623-.018-.008a6.713 6.713 0 0 0-2.4-.569V2h1a1 1 0 1 0 0-2h-2a1 1 0 0 0-1 1v2H9.89A6.977 6.977 0 0 1 12 8v5h-2V8A5 5 0 1 0 0 8v6a1 1 0 0 0 1 1h8v4a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-4h6a1 1 0 0 0 1-1V8a5 5 0 0 0-2.582-4.377ZM6 12H4a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2Z" />
+                </svg>
+                <span className="ms-3 whitespace-nowrap">Edit Routes</span>
+              </Link>
+            </li>
+
+
             <li>
               <Link
                 to="/org/Allot"

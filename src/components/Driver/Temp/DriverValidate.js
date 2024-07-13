@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const StudentValidate = () => {
+const DriverValidate = () => {
   const [user, setUser] = useState('');
   const history = useNavigate();
   const token = localStorage.getItem('token');
@@ -11,20 +11,21 @@ const StudentValidate = () => {
   useEffect(() => {
     if (token) {
       if (_id) {
-        axios.get(`${process.env.REACT_APP_API_BASE_URL}/studentNew?_id=${_id}`)
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}/driverNew?_id=${_id}`)
           .then(response => {
             setUser(response.data);
             // console.log(user)
           })
           .catch(err => console.log(err));
       } else {
-        history('/login');
+        history('/driver/login');
       }
     } else {
-      history('/login');
+      history('/driver/login');
     }
   }, [token, _id, history]);
+
   return user;
 };
 
-export default StudentValidate;
+export default DriverValidate;

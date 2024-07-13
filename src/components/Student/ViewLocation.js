@@ -4,32 +4,59 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import customMarkerIcon from "../../pin.png";
+import customMarkerIcon from "../../pin1.png";
+import busstopIcon from "./bus-stop.png";
 import L from "leaflet";
 import socketIOClient from "socket.io-client";
 import loader from "./Book.gif";
+import navigatorIcon from "./navigator.png";
+import { useSpring, animated } from "react-spring"; // Import react-spring
+import StudentValidate from "./StudentValidate";
 
 const ENDPOINT = process.env.REACT_APP_API_BASE_URL; // Replace with your socket server URL
 
 const customIcon = L.icon({
   iconUrl: customMarkerIcon,
-  iconSize: [40, 41],
+  iconSize: [50, 50],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
 });
 
+const stopIcon = L.icon({
+  iconUrl: busstopIcon,
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
+});
+
 const ViewLocation = () => {
   const { senderId, routeId } = useParams();
-  const [coords, setCoords] = useState(null); // Initialize coords as null initially
-  const [locationEnded, setLocationEnded] = useState(false); // State to track if location has ended
+  const [coords, setCoords] = useState(null);
+  const [locationEnded, setLocationEnded] = useState(false);
   const [stops, setStops] = useState([]);
   const [socket, setSocket] = useState(null);
   const [currentStatus, setCurrentStatus] = useState(false);
-  const [drawer, setDrawer] = useState(false);  
+  const [drawer, setDrawer] = useState(false);
   const [nextStop, setNextStop] = useState("");
   const [toReach, setToReach] = useState("");
   const [firstStop, setFirstStop] = useState("");
   const [lastStop, setLastStop] = useState("");
+
+  const [stopname, setstopName] = useState("");
+
+  StudentValidate()
+
+  const fetchStudentStop = async () => {
+    const response = await fetch(`${ENDPOINT}/stops`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch current status");
+    }
+    const data = await response.json();
+    const studentStopId = JSON.parse(localStorage.getItem("stopId"));
+    const studentStop = data.find((stop) => stop._id === studentStopId);
+    setstopName(studentStop ? studentStop.name : "");
+    console.log(studentStop ? studentStop.name : "");
+  };
 
   const fetchStops = async () => {
     try {
@@ -41,24 +68,33 @@ const ViewLocation = () => {
       const trip = tripsData.find((trip) => trip.tripCode === senderId);
       if (trip) {
         setStops(trip.stop || []);
-
-        // Set first and last stops
         setFirstStop(trip.stop.length ? trip.stop[0].name : "N/A");
         setLastStop(
           trip.stop.length ? trip.stop[trip.stop.length - 1].name : "N/A"
         );
 
-        // Filter stops into reached and unreached
-        const reachedStops = trip.stop.filter((stop) => stop.reached);
-        const unreachedStops = trip.stop.filter((stop) => !stop.reached);
+        const lastReachedStopIndex = trip.stop
+          .map((stop) => stop.reached)
+          .lastIndexOf(true);
 
-        // Set next stop and to reach values
+        const previousStop =
+          lastReachedStopIndex > 0
+            ? trip.stop[lastReachedStopIndex - 1].name
+            : "N/A";
+        const nextStopIndex = lastReachedStopIndex + 1;
+        const nextStop =
+          nextStopIndex < trip.stop.length
+            ? trip.stop[nextStopIndex].name
+            : "Trip Completed";
+
         setNextStop(
-          reachedStops.length
-            ? reachedStops[reachedStops.length - 1].name
+          lastReachedStopIndex !== -1
+            ? trip.stop[lastReachedStopIndex].name
             : "N/A"
         );
-        setToReach(unreachedStops.length ? unreachedStops[0].name : "N/A");
+        setToReach(
+          trip.stop[nextStopIndex]?.reached ? "Trip Completed" : nextStop
+        );
       } else {
         throw new Error("Trip not found");
       }
@@ -75,7 +111,7 @@ const ViewLocation = () => {
       }
       const tripData = await response.json();
       const trip = tripData.find((trip) => trip.tripCode === senderId);
-      setCurrentStatus(trip ? trip.currentStatus : false); // Update currentStatus state
+      setCurrentStatus(trip ? trip.currentStatus : false);
     } catch (error) {
       console.error("Error fetching current status:", error);
     }
@@ -85,18 +121,18 @@ const ViewLocation = () => {
     const newSocket = socketIOClient(ENDPOINT);
 
     newSocket.on("connect", () => {
-      console.log("Connected to server");
+      console.log("Connected to server!");
+      newSocket.emit("org-joinStudentRoom", senderId);
     });
 
     newSocket.on("org-locationEnded", (data) => {
-      setLocationEnded(true); // Set locationEnded to true when location ends
-      // Show toast notification
+      setLocationEnded(true);
       toast.info("Location sharing has ended.", {
         theme: "dark",
         position: "bottom-center",
-        autoClose: 3000, // Close after 3 seconds
+        autoClose: 3000,
         onClose: () => {
-          window.location.href = "/student/TrackLocation"; // Redirect after toast closes
+          window.location.href = "/student/TrackLocation";
         },
       });
     });
@@ -115,7 +151,10 @@ const ViewLocation = () => {
 
     setSocket(newSocket);
 
-    return () => newSocket.disconnect();
+    return () => {
+      console.log("Disconnecting socket");
+      newSocket.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -129,13 +168,11 @@ const ViewLocation = () => {
   }, [senderId, socket]);
 
   useEffect(() => {
-    // Function to check current status from database
-
+    fetchStudentStop();
     checkCurrentStatus();
   }, [senderId]);
 
   useEffect(() => {
-    // Show last known location if coords are null or undefined
     const showLastKnownLocation = () => {
       if (!coords || !coords.lat || !coords.long) {
         setCoords(null);
@@ -146,38 +183,33 @@ const ViewLocation = () => {
   }, [coords]);
 
   function convertToIST(dateTimeString) {
-    // Parse the input date-time string
     const date = new Date(dateTimeString);
-
-    // Convert the UTC time to IST (UTC+5:30)
-    const istOffset = 5.5 * 60 * 60 * 1000; // 5 hours 30 minutes in milliseconds
+    const istOffset = 5.5 * 60 * 60 * 1000;
     const istTime = new Date(date.getTime() + istOffset);
 
-    // Get hours and minutes
     let hours = istTime.getUTCHours();
     const minutes = istTime.getUTCMinutes();
-
-    // Determine AM or PM suffix
     const ampm = hours >= 12 ? "PM" : "AM";
-
-    // Convert hours from 24-hour to 12-hour format
     hours = hours % 12;
-    hours = hours ? hours : 12; // The hour '0' should be '12'
-
-    // Format minutes with leading zero if needed
+    hours = hours ? hours : 12;
     const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
 
-    // Return the formatted time string
     return `${hours}:${formattedMinutes} ${ampm}`;
   }
 
   const routeStops = stops.map((stop) => ({
     name: stop.name,
-    reached: stop.reached, // Assuming stop.reached is the boolean value
+    reached: stop.reached,
     arrivalTime: stop.arrivalTime
       ? convertToIST(stop.arrivalTime)
       : "Yet To Arrive",
   }));
+
+  // Use react-spring for marker animation
+  const animatedMarkerPosition = useSpring({
+    to: { lat: coords?.lat || 0, lng: coords?.long || 0 },
+    config: { duration: 5000 },
+  });
 
   const AnimatedMarker = ({ position }) => {
     const map = useMap();
@@ -189,18 +221,34 @@ const ViewLocation = () => {
     }, [position, map]);
 
     return (
-      <Marker position={position} icon={customIcon}>
-        <Popup>
-          <strong>{firstStop.toUpperCase()}</strong> -{" "}
-          <strong>{lastStop.toUpperCase()}</strong>
-        </Popup>
-      </Marker>
+      <animated.div
+        style={{
+          position: "absolute",
+          left: animatedMarkerPosition.lng.interpolate((x) => `${x * 100}%`),
+          top: animatedMarkerPosition.lat.interpolate((y) => `${y * 100}%`),
+        }}
+      >
+        <Marker position={position} icon={customIcon}>
+          <Popup>
+            <strong>{firstStop.toUpperCase()}</strong> -{" "}
+            <strong>{lastStop.toUpperCase()}</strong>
+          </Popup>
+        </Marker>
+      </animated.div>
     );
   };
 
+  const StopMarkers = ({ stops }) => {
+    return stops.map((stop, index) => (
+      <Marker key={index} position={[stop.lat, stop.long]} icon={stopIcon}>
+        <Popup>{stop.name}</Popup>
+      </Marker>
+    ));
+  };
+
   return (
-    <div className="flex flex-col">
-      <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white border-b border-gray-200">
+    <div className="flex flex-col sm:m-auto">
+      <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white border-b border-gray-200">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center space-x-2">
             <Link to="/student/TrackLocation" className="text-lg font-semibold">
@@ -226,10 +274,6 @@ const ViewLocation = () => {
             <button
               className="text-black py-2 px-4 bg-gray-200 rounded-full font-semibold text-sm"
               type="button"
-              data-drawer-target="drawer-bottom-example"
-              data-drawer-show="drawer-bottom-example"
-              data-drawer-placement="bottom"
-              aria-controls="drawer-bottom-example"
               onClick={() => {
                 setDrawer(true);
               }}
@@ -252,26 +296,28 @@ const ViewLocation = () => {
 
               <MapContainer
                 center={[coords.lat, coords.long]}
-                zoom={17}
+                zoom={16}
                 style={{ height: "59vh", width: "100%" }}
                 className="rounded-lg"
               >
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <StopMarkers stops={stops} />
                 <AnimatedMarker position={[coords.lat, coords.long]} />
               </MapContainer>
             </div>
           </>
-          <div className="speed relative -top-16 bg-gradient-to-r from-blue-800 to-blue-900 p-1 md:p-7 rounded-md shadow-lg text-center w-fit m-auto text-white flex justify-center items-center align-middle">
+          <div className="speed relative -top-32 bg-gradient-to-r from-gray-950 to-gray-800 p-1 md:p-7 rounded-md shadow-lg text-center w-fit m-auto text-white flex justify-center items-center align-middle">
             <span className="mx-2">
               <strong>
-                {((coords && coords.speed ? (coords.speed) : 0) * 3.6).toFixed(2)} km / hr
+                {(coords && coords.speed ? Math.round(coords.speed) : 0) * 3.6}{" "}
+                km / hr
               </strong>
             </span>
           </div>
-          <div className="bg-gray-100  p-6 rounded-lg relative -top-14 stop-track-detail h-auto">
-            <div className="flex justify-between mb-4 text-sm">
-              <span>{firstStop}</span>
-              <span>{lastStop}</span>
+          <div className="bg-gradient-to-r from-gray-950 to-gray-800 p-6 rounded-t-2xl stop-track-detail h-auto text-white bottom-0 absolute w-full">
+            <div className="flex justify-between mb-4 text-sm capitalize">
+              <span className="text-left">{firstStop}</span>
+              <span className="text-right">{lastStop}</span>
             </div>
             <div className="relative w-full bg-gray-200 rounded-full h-2.5 ">
               <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-2.5 h-2.5 bg-green-500 rounded-full"></div>
@@ -279,14 +325,36 @@ const ViewLocation = () => {
             </div>
             <div className="flex justify-between mt-4">
               <div>
-                <span className="block text-sm font-semibold">
+                <span className="block text-sm font-semibold text-left">
                   Previous Stop
                 </span>
-                <span className="block text-sm">{nextStop}</span>
+                <span className="block text-sm capitalize">{nextStop}</span>
               </div>
               <div>
-                <span className="block text-sm font-semibold">Next Stop</span>
-                <span className="block text-sm">{toReach}</span>
+                <span className="block text-sm font-semibold text-right">
+                  Next Stop
+                </span>
+                <span className="block text-sm capitalize">{toReach}</span>
+              </div>
+            </div>
+
+            <div className="w-full bg-black rounded-lg border border-gray-700 shadow-md relative mt-6">
+              <div className="flex items-center p-4">
+                <img
+                  src={navigatorIcon}
+                  alt="Navigation Icon"
+                  className="w-10 h-10 mr-4"
+                />
+                <div className="flex flex-col">
+                  <p className="text-sm text-yellow-500">Heading Towards</p>
+                  <p
+                    className={`text-lg font-semibold text-white capitalize transition-opacity duration-500 ease-in-out ${
+                      toReach !== "" ? "opacity-100" : "opacity-0"
+                    }`}
+                  >
+                    {toReach !== "" ? toReach : "Trip Completed"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -299,7 +367,6 @@ const ViewLocation = () => {
           ></div>
           {/* Drawer component */}
           <div
-            id="drawer-bottom-example"
             className={`fixed bottom-0 left-0 right-0 z-50 w-full p-4 overflow-y-auto transition-transform bg-white transform ${
               drawer ? "translate-y-0" : "translate-y-full"
             } ease-in-out duration-300`}
@@ -324,8 +391,6 @@ const ViewLocation = () => {
               </h5>
               <button
                 type="button"
-                data-drawer-hide="drawer-bottom-example"
-                aria-controls="drawer-bottom-example"
                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex items-center justify-center "
                 onClick={() => {
                   setDrawer(false);
@@ -354,7 +419,7 @@ const ViewLocation = () => {
             </span>
             <div className="rounded-lg relative overflow-auto h-64 hide-scrollbar mt-3">
               {routeStops.map((stop, index) => (
-                <div className="max-w-sm bg-gradient-to-r bg-gray-700  text-white p-4 relative rounded-lg mt-1">
+                <div className="max-w-sm bg-gradient-to-r from-gray-950 to-gray-800  text-white p-4 relative rounded-lg mt-1">
                   {/* Vertical bar with ball */}
                   {/* <div className="absolute left-0 top-0 bottom-0 flex items-center">
                 <img src={stop.reached ? reachedIcon : unreachedIcon} alt="Vertical Bar" className="h-full rounded-l-lg" />
@@ -369,8 +434,10 @@ const ViewLocation = () => {
                     </div>
                     <div className="flex justify-between items-center mt-4">
                       <span className="text-sm ">Stop Name : </span>
-                      <span className="text-sm font-bold flex items-center">
+
+                      <span className="text-sm font-bold flex items-center capitalize">
                         {stop.name}
+
                         <span
                           className={`ml-2 w-3 h-3 ${
                             stop.reached ? "bg-green-500" : "bg-red-500"
@@ -378,6 +445,11 @@ const ViewLocation = () => {
                         ></span>
                       </span>
                     </div>
+                    {stop && stop.name && stopname && stopname === stop.name && <div className="bg-green-400 text-white w-full text-center p-1 mt-4 rounded-lg capitalize font-semibold shadow-2xl">
+                      {stop && stop.name && stopname && stopname === stop.name
+                        ? "your stop"
+                        : ""}
+                    </div>}
                   </div>
                 </div>
               ))}

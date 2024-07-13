@@ -31,6 +31,12 @@ import StudentSidebar from "./components/Student/StudentSidebar";
 import TrackLocation from "./components/Student/TrackLocation";
 import ViewLocation from "./components/Student/ViewLocation";
 import Profile from './components/Student/Profile';
+import DriverSidebar from "./components/Driver/DriverSidebar";
+import Sharelocation from "./components/Driver/Sharelocation.js";
+import Location from "./components/Driver/DriverLocation";
+import EditRoutes from "./components/Organization/EditRoutes.js";
+import Changesseq from "./components/Organization/Changesseq.js"
+
 
 
 
@@ -248,14 +254,50 @@ function App() {
             <DriverLogin></DriverLogin>
           </>}
           />
-          <Route path='/driver/home' exact element={<>
+          {/* <Route path='/driver/home' exact element={<>
             <DriverHome org={org} stop={stop} trips={trips} route={route}> </DriverHome>
           </>}
           />
           <Route path='/driver/:userId' exact element={<>
             <DriverLocation trips={trips}></DriverLocation>
           </>}
+          /> */}
+
+          <Route
+            path="/driver/home"
+            exact
+            element={
+              <>
+              
+                <DriverSidebar />
+                <DriverHome>
+                  {" "}
+                </DriverHome>
+              </>
+            }
           />
+          <Route
+            path="/driver/Location"
+            exact
+            element={
+              <>
+                <DriverSidebar />
+                <Location org={org} stop={stop} trips={trips} route={route} />
+              </>
+            }
+          />
+
+          <Route
+            path="/driver/Sharelocation/:roomId"
+            exact
+            element={
+              <>
+                <DriverSidebar />
+                <Sharelocation />
+              </>
+            }
+          />
+
 
           <Route path='/student/login' exact element={<>
             <StudentLogin />
@@ -320,6 +362,49 @@ function App() {
             }
           />
 
+<Route
+            path="/org/EditRoutes"
+            exact
+            element={
+              <>
+                <div className="flex">
+                  <div className="">
+                    {" "}
+                    {/* Fixed width for Sidebar */}
+                    <Sidebar />
+                  </div>
+                  <div className="flex-grow">
+                    {" "}
+                    {/* AddRoute takes remaining space */}
+                    <EditRoutes></EditRoutes>
+                  </div>
+                </div>
+              </>
+            }
+          />
+
+
+<Route
+            path="/org/EditRoutes/:id"
+            exact
+            element={
+              <>
+                <div className="flex">
+                  <div className="">
+                    {" "}
+                    {/* Fixed width for Sidebar */}
+                    <Sidebar />
+                  </div>
+                  <div className="flex-grow">
+                    {" "}
+                    {/* AddRoute takes remaining space */}
+                    <Changesseq></Changesseq>
+                    
+                  </div>
+                </div>
+              </>
+            }
+          />
 
         </Routes>
       </Router>
