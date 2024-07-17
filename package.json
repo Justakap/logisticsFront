@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@turf/turf": "^7.0.0",
     "axios": "^1.6.8",
+    "firebase": "^10.12.3",
     "flowbite": "^2.4.1",
     "install": "^0.13.0",
     "leaflet": "^1.9.4",

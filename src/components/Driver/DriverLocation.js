@@ -3,7 +3,7 @@ import React, { useEffect, useReducer, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DriverValidate from "./DriverValidate";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import customMarkerIcon from "../../pin.png";
+import customMarkerIcon from "../../pin1.png";
 import L from "leaflet";
 
 // Define action types

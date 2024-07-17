@@ -6,7 +6,7 @@ import axios from 'axios';
 import Coords from './Coords';
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from 'leaflet';
-import customMarkerIcon from "../pin.png";
+import customMarkerIcon from "../pin1.png";
 
 export default function Rec() {
   // const user = Validate();

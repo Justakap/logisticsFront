@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import loader from "./Book.gif";
 import StudentValidate from "./StudentValidate";
+import { generateToken, messaging } from "../../notifications/firebase";
+import { onMessage } from "firebase/messaging";
 
 function Profile() {
-  const user = StudentValidate()
-  const [student, setStudent] = useState(null);
+  const user = StudentValidate();
   const [stops, setStops] = useState([]);
   const [organizations, setOrganizations] = useState([]);
 
-  useEffect(() => {
-  
+  const filteredStop = stops.find((stop) => stop._id === user.stop);
+  const filteredOrg = organizations.find((org) => org._id === user.org);
 
+  useEffect(() => {
     // Fetch stops data
     const fetchStops = async () => {
       try {
@@ -42,6 +44,20 @@ function Profile() {
     fetchOrganizations();
   }, []);
 
+  useEffect(() => {
+  
+    if (JSON.parse(localStorage.getItem("user")) && JSON.parse(localStorage.getItem("stopId"))) {
+      generateToken(
+        JSON.parse(localStorage.getItem("stopId")),
+        JSON.parse(localStorage.getItem("user"))
+      );
+    }
+
+    onMessage((messaging, payload) => {
+      console.log(payload);
+    });
+  }, []);
+
   if (!user) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -52,10 +68,6 @@ function Profile() {
 
   const initials = user.name ? user.name.split(" ") : "N/A";
   const avatar = initials[0][0] + initials[initials.length - 1][0];
-
-  // Filter stops and organizations based on user data
-  const filteredStop = stops.find((stop) => stop._id === user.stop);
-  const filteredOrg = organizations.find((org) => org._id === user.org);
 
   return (
     <>
@@ -113,9 +125,7 @@ function Profile() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-gray-600">Email:</span>
-              <span className="text-gray-800 font-medium">
-                {user.email}
-              </span>
+              <span className="text-gray-800 font-medium">{user.email}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-600">Organization:</span>
@@ -131,9 +141,7 @@ function Profile() {
             </div> */}
             <div className="flex items-center justify-between">
               <span className="text-gray-600">Contact:</span>
-              <span className="text-gray-800 font-medium">
-                {user.contact}
-              </span>
+              <span className="text-gray-800 font-medium">{user.contact}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-600">Stop:</span>
