@@ -307,7 +307,7 @@ export default function DriverLocation() {
                       topicName: nextUnreachedStop.id,
                       title: "Stop Alert !",
                       body: "The Bus Is Arriving to Your Stop in 1 min.",
-                      image: "https://i.postimg.cc/2VVJqS0D/Whats-App-Image-2024-07-14-at-22-54-04.jpg"
+                      image: "https://i.postimg.cc/sxXPwpTn/maskable-icon.png"
                     });
                   }, 10000)(); // Adjust the debounce delay as needed
 

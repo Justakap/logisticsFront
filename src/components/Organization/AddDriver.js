@@ -7,7 +7,7 @@ import OrgValidate from './OrgValidate';
 
 const AddDriver = () => {
   const user = OrgValidate();
-  const sendEmail = async (to, subject, message) => {
+  const sendEmail = async (to, subject, message, fromEmail) => {
     try {
       const response = await axios.post(
         "https://smartlinksoft.in/api/email.php",
@@ -15,6 +15,7 @@ const AddDriver = () => {
           to: to,
           subject: subject,
           message: message,
+          from_email: fromEmail
         }
       );
       // console.log(response.data);
@@ -91,7 +92,8 @@ const AddDriver = () => {
         formData.email,
         "Welcome to Mark Transit",
         ``
-        `Your password is: ${formData.password} \n\nThank you\nTeam @MarkTransit`
+          `Your password is: ${formData.password} \n\nThank you\nTeam @MarkTransit`,
+          `markdigital@gmail.com`
       );
 
       // Clear form data after successful submission (excluding password and org)
@@ -145,7 +147,7 @@ const AddDriver = () => {
               required
             />
           </div>
-          
+
           <div>
             <label htmlFor="contact" className="block mb-2 text-sm font-medium text-gray-900">
               Contact
@@ -172,7 +174,7 @@ const AddDriver = () => {
               className="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full p-2.5"
             >
               <option value="">Select Stop</option>
-              {stops.filter((e=>e.org===user._id)).map((stop) => (
+              {stops.filter((e => e.org === user._id)).map((stop) => (
                 <option key={stop._id} value={stop._id}>
                   {stop.name}
                 </option>

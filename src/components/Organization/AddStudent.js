@@ -8,16 +8,23 @@ import OrgValidate from './OrgValidate';
 
 export const AddStudent = () => {
   const user = OrgValidate();
-  const sendEmail = async (to, subject, message) => {
+  const sendEmail = async (to, subject, message, fromEmail) => {
     try {
-      const response = await axios.post('https://smartlinksoft.in/api/email.php', {
-        to: to,
-        subject: subject,
-        message: message
-      });
+      const response = await axios.post(
+        "https://smartlinksoft.in/api/email.php",
+        {
+          to: to,
+          subject: subject,
+          message: message,
+          from_email: fromEmail
+        }
+      );
       // console.log(response.data);
     } catch (error) {
-      console.error('Error sending email:', error.response ? error.response.data : error.message);
+      console.error(
+        "Error sending email:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -77,7 +84,7 @@ export const AddStudent = () => {
           org: user._id, // Ensure org is user._id when submitting
         });
         toast.success('Student added successfully!');
-        await sendEmail(formData.email, 'Welcome to Mark Transit', `Your password is: ${formData.password} \n\nThank you\nTeam @Mark Transit`);
+        await sendEmail(formData.email, 'Welcome to Mark Transit', `Your password is: ${formData.password} \n\nThank you\nTeam @Mark Transit`,`markdigital@gmail.com`);
 
         setFormData({
           name: '',
