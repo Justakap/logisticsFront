@@ -7,6 +7,24 @@ import OrgValidate from './OrgValidate';
 
 const AddDriver = () => {
   const user = OrgValidate();
+  const sendEmail = async (to, subject, message) => {
+    try {
+      const response = await axios.post(
+        "https://smartlinksoft.in/api/email.php",
+        {
+          to: to,
+          subject: subject,
+          message: message,
+        }
+      );
+      // console.log(response.data);
+    } catch (error) {
+      console.error(
+        "Error sending email:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
 
   // Function to generate random password
   const pwdGen = (length) => {
@@ -69,6 +87,12 @@ const AddDriver = () => {
       // Make POST request with formData
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/add-driver`, formData);
       toast.success('Driver added successfully!');
+      await sendEmail(
+        formData.email,
+        "Welcome to Mark Transit",
+        ``
+        `Your password is: ${formData.password} \n\nThank you\nTeam @MarkTransit`
+      );
 
       // Clear form data after successful submission (excluding password and org)
       setFormData({

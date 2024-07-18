@@ -8,6 +8,18 @@ import OrgValidate from './OrgValidate';
 
 export const AddStudent = () => {
   const user = OrgValidate();
+  const sendEmail = async (to, subject, message) => {
+    try {
+      const response = await axios.post('https://smartlinksoft.in/api/email.php', {
+        to: to,
+        subject: subject,
+        message: message
+      });
+      // console.log(response.data);
+    } catch (error) {
+      console.error('Error sending email:', error.response ? error.response.data : error.message);
+    }
+  };
 
   const pwdGen = (length) => {
     let result = '';
@@ -65,6 +77,7 @@ export const AddStudent = () => {
           org: user._id, // Ensure org is user._id when submitting
         });
         toast.success('Student added successfully!');
+        await sendEmail(formData.email, 'Welcome to Mark Transit', `Your password is: ${formData.password} \n\nThank you\nTeam @Mark Transit`);
 
         setFormData({
           name: '',
@@ -148,7 +161,7 @@ export const AddStudent = () => {
                 required
               />
             </div>
-          
+
             <div>
               <label htmlFor="stop" className="block mb-2 text-sm font-medium text-gray-900">
                 Stop
@@ -161,7 +174,7 @@ export const AddStudent = () => {
                 className="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full p-2.5"
               >
                 <option value="">Select Stop</option>
-                {stops.filter((e=>e.org===user._id)).map((stop) => (
+                {stops.filter((e => e.org === user._id)).map((stop) => (
                   <option key={stop._id} value={stop._id}>
                     {stop.name}
                   </option>

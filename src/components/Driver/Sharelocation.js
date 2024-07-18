@@ -53,12 +53,12 @@ export default function DriverLocation() {
   const user = DriverValidate();
   const socket = useMemo(() => io(process.env.REACT_APP_API_BASE_URL), []);
   const emittedStopRef = useRef(null);
+  const debounceRef = useRef(null);
 
   const debounce = (func, delay) => {
-    let timer;
     return function (...args) {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
+      clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => {
         func.apply(this, args);
       }, delay);
     };
@@ -305,9 +305,9 @@ export default function DriverLocation() {
                     });
                     sendPushNotification({
                       topicName: nextUnreachedStop.id,
-                      title: "Be Ready !!!!",
-                      body: "The Bus Is Arriving to Your Stop in Sometime.",
-                      image : "https://cdn-icons-png.flaticon.com/512/352/352723.png"
+                      title: "Stop Alert !",
+                      body: "The Bus Is Arriving to Your Stop in 1 min.",
+                      image: "https://i.postimg.cc/2VVJqS0D/Whats-App-Image-2024-07-14-at-22-54-04.jpg"
                     });
                   }, 10000)(); // Adjust the debounce delay as needed
 

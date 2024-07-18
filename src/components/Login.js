@@ -2,7 +2,9 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
+import { generateToken, messaging } from "../notifications/firebase";
+import { onMessage } from "firebase/messaging";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -28,8 +30,23 @@ const Login = () => {
 
       if (response.data.auth) {
         localStorage.setItem("user", JSON.stringify(response.data.user._id));
-        if(loginType === "Student"){
-          localStorage.setItem("stopId", JSON.stringify(response.data.user.stop));
+        if (loginType === "Student") {
+          localStorage.setItem(
+            "stopId",
+            JSON.stringify(response.data.user.stop)
+          );
+          if (
+            JSON.parse(localStorage.getItem("user")) &&
+            JSON.parse(localStorage.getItem("stopId"))
+          ) {
+            const token = generateToken(
+              JSON.parse(localStorage.getItem("stopId")),
+              JSON.parse(localStorage.getItem("user"))
+            );
+            if (token) {
+              navigate("/student/home");
+            }
+          }
         }
         localStorage.setItem("token", JSON.stringify(response.data.auth));
         const currentUser = JSON.parse(localStorage.getItem("user"));
@@ -37,7 +54,9 @@ const Login = () => {
 
         toast.success("Login successful!");
 
-        navigate(`/${loginType.toLowerCase()}/home`);
+        if (loginType === "Org" || loginType === "Driver") {
+          navigate(`/${loginType.toLowerCase()}/home`);
+        }
       } else if (response.data === "incorrect") {
         toast.error("Password does not match");
       } else if (response.data === "notexist") {
