@@ -9,7 +9,7 @@ Welcome to Mark Transit! Our latest innovation designed to enhance the daily com
 - **Status Updates**: Receive real-time updates on arrival times at various stops.
 - **Arrival Time Notifications**: Get instant alerts when the vehicle is approaching your designated stop.
 
-Mark Transit is dedicated to making college/school commutes safer and more efficient for everyone involved.
+Mark Transit is dedicated to making transport safer and more efficient for everyone involved.
 
 ## Screenshots
 
